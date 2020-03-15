@@ -1,7 +1,8 @@
 export class ContactModel {
-    constructor(id, name, mobile, avatar) {
+    constructor(id, name, email, mobile, avatar) {
         this.id = id;
         this.name = name;
+        this.email = email
         this.mobile = mobile;
         this.avatar = avatar;
     }
@@ -13,13 +14,8 @@ export const ContactSchema = {
     properties: {
         id: 'int',
         name: 'string',
+        email: 'string',
         mobile: 'string',
         avatar: 'string'
     }
 }
-
-var contactId = 0
-
-export const getContactId = () => { return this.contactId }
-
-export const incrementContactId = () => { return this.contactId += 1 }

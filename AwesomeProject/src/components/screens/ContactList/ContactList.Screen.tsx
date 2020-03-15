@@ -1,13 +1,9 @@
 import React, { useEffect, Component } from 'react';
 import { FlatList } from 'react-native';
-import { Container, View, List, ListItem, Header, Title, Content, Thumbnail, Text, Left, Body, Right, Icon, Button } from 'native-base';
+import { Container, List, ListItem, Header, Title, Content, Thumbnail, Text, Left, Body, Right, Icon, Button } from 'native-base';
 import { ContactModel } from '../../../realm/models/Contact'
-import { StoreState } from '../../../types';
-import { ThunkDispatch } from 'redux-thunk';
 import { Action } from 'redux';
-import { saveContact, getAllContacts, pushContact } from './ContactList.Screen.Actions';
-import { connect } from 'react-redux';
-
+import { AddContactScreenNavigationProp } from '../../../navigation/type'
 interface IContact {
     id: string;
     name: string;
@@ -19,10 +15,16 @@ interface Props {
     contacts: any[];
     saveContact(): Promise<Action>;
     getAllContacts(): Promise<Action>;
+    navigation: AddContactScreenNavigationProp;
 }
 
 
 const ContactListScreen: React.FC<Props> = (props: Props) => {
+
+    useEffect(() => {
+        props.getAllContacts();
+    }, [])
+
     const sampleContact: IContact[] = [
         {
             'id': '1',
@@ -57,7 +59,12 @@ const ContactListScreen: React.FC<Props> = (props: Props) => {
             listItem.push(
                 <ListItem avatar key={props.contacts[key].id}>
                     <Left style={{ flex: 1 }}>
-                        <Thumbnail small source={require('../../../assets/images/defaultAvatar.png')} />
+                        {
+                            props.contacts[key].avatar == '' ?
+                                <Thumbnail small source={require('../../../assets/images/defaultAvatar.png')} />
+                                :
+                                <Thumbnail small source={{ uri: 'data:image/jpeg;base64,' + source }} />
+                        }
                     </Left>
                     <Body style={{ flex: 3 }}>
                         <Text>{props.contacts[key].name}</Text>
@@ -72,14 +79,14 @@ const ContactListScreen: React.FC<Props> = (props: Props) => {
         }
         return listItem;
     }
-    const contactModel = new ContactModel('Arvind Chawdhary', '1234567890', '');
+
     console.log('Props');
     console.log(props);
-    console.log('Sample Contacts')
-    console.log(sampleContact)
-    console.log('contacts length');
-    console.log(props.contacts.length);
-    const contactList: any[] = props.contacts
+    // console.log('Sample Contacts')
+    // console.log(sampleContact)
+    // console.log('contacts length');
+    // console.log(props.contacts.length);
+    // const contactList: any[] = props.contacts
     return (
         <Container>
             <Header>
@@ -92,7 +99,7 @@ const ContactListScreen: React.FC<Props> = (props: Props) => {
                     <Title>Contact</Title>
                 </Body>
                 <Right >
-                    <Button transparent onPress={props.saveContact}>
+                    <Button transparent onPress={() => props.navigation.push('AddContact')}>
                         <Icon fontSize={16} name='add' />
                     </Button>
                 </Right>
