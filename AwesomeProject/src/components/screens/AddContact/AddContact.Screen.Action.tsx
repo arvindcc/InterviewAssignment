@@ -7,16 +7,16 @@ import { Action, ActionCreator } from 'redux';
 import { StoreState } from '../../../types';
 import { IContact } from '../../../types'
 
-export type ConstantListThunk = ActionCreator<ThunkAction<
-    Promise<PushContact>,
-    any[],
-    boolean,
-    Action<PushContact>
->>
+// export type ConstantListThunk = ActionCreator<ThunkAction<
+//     Promise<PushContact>,
+//     any[],
+//     boolean,
+//     Action<PushContact>
+// >>
 
 export interface PushContact {
     type: constants.PUSH_NEW_CONTACT,
-    payload: any,
+    payload: ContactModel,
 }
 
 export const saveContact: ActionCreator<ThunkAction<
@@ -28,7 +28,7 @@ export const saveContact: ActionCreator<ThunkAction<
     any,
     // The type of the last action to be dispatched
     Action
->> = (name, email,mobile, avatar) => {
+>> = (name, email, mobile, avatar) => {
     console.log('saveContactThunkAction');
     return async (dispatch: ThunkDispatch<StoreState, void, Action>) => {
         dispatch(itemsAreLoading(true));
@@ -37,22 +37,33 @@ export const saveContact: ActionCreator<ThunkAction<
             const maxId = await contactService.maxId();
             console.log('getContactMaxId' + maxId);
             const contactModel = new ContactModel(maxId + 1, name, email, mobile, avatar);
-            console.log()
             const contact = await contactService.save(contactModel);
-            dispatch(itemsFetchDataSuccess(contact));
-            dispatch(itemsHaveError(false));
-            dispatch(pushContact([contact]));
+            if (contact) {
+                let contacts: ContactModel[] = [];
+                const allContacts = await contactService.findAll();
+                Array.from(allContacts).map((RealmObject: any) => {
+                    contacts.push(new ContactModel(RealmObject.id, RealmObject.name, RealmObject.email, RealmObject.mobile, RealmObject.avatar))
+                })
+                dispatch(itemsFetchDataSuccess(contacts));
+                dispatch(itemsHaveError(false));
+                //dispatch(pushContact(contacts));
+            }
+            // dispatch(itemsFetchDataSuccess(contact));
+            // dispatch(itemsHaveError(false));
+            dispatch(pushContact(contact));
         } catch (error) {
             dispatch(itemsFetchDataSuccess(error));
             dispatch(itemsHaveError(true));
             console.log('error');
             console.log(error);
         }
+        dispatch(itemsAreLoading(false));
     };
 };
-export const pushContact: ActionCreator<PushContact> = (contacts: []) => {
+
+export const pushContact: ActionCreator<PushContact> = (contact: ContactModel) => {
     return {
         type: 'PUSH_NEW_CONTACT',
-        payload: contacts
+        payload: contact
     }
 }

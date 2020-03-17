@@ -1,5 +1,5 @@
 import { combineReducers, Reducer } from 'redux';
-import { pushNewContact } from '../components/screens/ContactList/ContactList.Screen.Reducer';
+import { pushNewContact } from '../components/screens/AddContact/AddContact.Screen.Reducer';
 import { StoreState } from '../types/index';
 import * as constants from '../constants';
 import { GlobalAction } from './globalActions'

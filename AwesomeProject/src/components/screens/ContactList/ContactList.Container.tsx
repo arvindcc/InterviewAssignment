@@ -1,5 +1,5 @@
 import { connect } from 'react-redux';
-import { saveContact, getAllContacts } from './ContactList.Screen.Actions';
+import { getAllContacts } from './ContactList.Screen.Actions';
 import ContactListScreen from './ContactList.Screen';
 import { StoreState } from '../../../types/index'
 import { ThunkDispatch } from 'redux-thunk';
@@ -12,15 +12,14 @@ const mapStateToProps = (state: StoreState) => {
     return {
         hasError: state.itemsHaveError,
         isLoading: state.itemsAreLoading,
-        contacts: state.pushNewContact,
-
+        contact: state.pushNewContact,
+        contacts: state.items,
     };
 };
 
 const mapDispatchToProps = (dispatch: ThunkDispatch<StoreState, void, Action>) => {
     console.log('mapDispatchToProps');
     return {
-        saveContact: () => dispatch(saveContact()),
         getAllContacts: () => dispatch(getAllContacts())
     };
 };

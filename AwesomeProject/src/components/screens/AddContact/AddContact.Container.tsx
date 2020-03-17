@@ -13,7 +13,7 @@ const mapStateToProps = (state: StoreState) => {
         hasError: state.itemsHaveError,
         isLoading: state.itemsAreLoading,
         contact: state.pushNewContact,
-
+        contacts: state.items,
     };
 };
 

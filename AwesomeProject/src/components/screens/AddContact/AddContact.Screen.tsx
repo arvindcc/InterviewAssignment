@@ -1,16 +1,19 @@
 import React, { useState } from 'react';
-//import { Button } from 'react-native';
-import { Container, Header, Left, Icon, Body, Title, Text, Right, Content, Button, Item, Input, Card, CardItem, View, Thumbnail, Label } from 'native-base';
+import { Container, Header, Left, Icon, Body, Title, Text, Right, Content, Button, Item, Input, Card, CardItem, View, Thumbnail, Label, Spinner } from 'native-base';
 import { Action } from 'redux';
 import { AddContactScreenNavigationProp } from '../../../navigation/type'
 import ImagePicker from 'react-native-image-picker';
 import { IContact } from '../../../types'
+import { useDispatch } from 'react-redux';
+import { itemsAreLoading } from '../../../redux/globalActions';
 
 interface Props {
     contact: IContact;
     navigation: AddContactScreenNavigationProp;
     //saveContact(name: string, email: string, mobile: string, avatar: string): Promise<Action>;
     saveContact(name: string, email: string, mobile: string, avatar: string): Promise<Action>;
+    isLoading: boolean;
+    hasError: boolean;
 
 }
 
@@ -20,7 +23,8 @@ const AddContact: React.FC<Props> = (props) => {
     const [mobile, setMobile] = useState('9820342351')
     const [email, setEmail] = useState('arvind@example.com')
     const [avatar, setAvatar] = useState('')
-
+    const [imageLoad, setImageLoad] = useState(false)
+    //const dispatch = useDispatch();
     const options = {
         title: 'Select Avatar',
         //customButtons: [{ name: 'fb', title: 'Choose Photo from Facebook' }],
@@ -29,7 +33,10 @@ const AddContact: React.FC<Props> = (props) => {
             path: 'images',
         },
     };
+
     const chooseAvatar = () => {
+        setImageLoad(imageLoad => !imageLoad);
+        console.log(imageLoad);
         ImagePicker.showImagePicker(options, (response) => {
             console.log('Response = ', response);
 
@@ -42,28 +49,25 @@ const AddContact: React.FC<Props> = (props) => {
             } else {
                 const source = { uri: response.uri };
                 console.log(source)
-                setAvatar(response.data)
-                // You can also display the image using data:
-                // const source = { uri: 'data:image/jpeg;base64,' + response.data };
-
-                // useState({
-                //     avatarSource: source,
-                // });
+                setAvatar(response.uri)
             }
+            setImageLoad(imageLoad => !imageLoad);
+            console.log(imageLoad);
         });
 
     }
 
     const onSaveContact = () => {
-        return props.saveContact(name, email, mobile, avatar)
+        props.saveContact(name, email, mobile, avatar)
+        props.navigation.goBack();
     }
 
     return (
         <Container>
             <Header>
                 <Left>
-                    <Button transparent >
-                        <Icon name='ios-arrow-back' onPress={() => props.navigation.goBack()} />
+                    <Button transparent onPress={() => props.navigation.goBack()}>
+                        <Icon name='ios-arrow-back' />
                     </Button>
                 </Left>
                 <Body>
@@ -72,8 +76,8 @@ const AddContact: React.FC<Props> = (props) => {
                     </Title>
                 </Body>
                 <Right>
-                    <Button transparent >
-                        <Icon name="ios-checkmark" onPress={() => props.saveContact(name, email, mobile, avatar)} />
+                    <Button transparent onPress={onSaveContact}>
+                        <Icon name="ios-checkmark" />
                     </Button>
                 </Right>
             </Header>
@@ -81,11 +85,21 @@ const AddContact: React.FC<Props> = (props) => {
                 <Card style={{ padding: 10 }}>
                     <CardItem bordered>
                         <View style={{ flex: 1, flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
-                            <Thumbnail
-                                circular
-                                source={require('../../../assets/images/defaultAvatar.png')}
-                                style={{ height: 300, width: 300, borderWidth: 1, borderColor: 'wheat', borderRadius: 150 }}
-                            />
+
+                            {
+                                imageLoad ? <Spinner /> :
+                                    avatar == '' || null ?
+                                        <Thumbnail
+                                            circular
+                                            source={require('../../../assets/images/defaultAvatar.png')}
+                                            style={{ height: 300, width: 300, borderWidth: 1, borderColor: 'wheat', borderRadius: 150 }}
+                                        /> :
+                                        <Thumbnail
+                                            circular
+                                            source={{ uri: avatar }}
+                                            style={{ height: 300, width: 300, borderWidth: 1, borderColor: 'wheat', borderRadius: 150 }}
+                                        />
+                            }
                             <Button transparent onPress={chooseAvatar} style={{ flex: 1 }} >
                                 <Text>Choose Avatar</Text>
                             </Button>
@@ -95,25 +109,24 @@ const AddContact: React.FC<Props> = (props) => {
                         <Item>
                             <Icon active name='person' />
                             <Input placeholder='Full Name' value={name} onChangeText={text => setName(text)} />
-                            <Icon name='checkmark-circle' />
+                            {/* <Icon name='checkmark-circle' /> */}
                         </Item>
                     </CardItem>
                     <CardItem>
                         <Item>
                             <Icon active name='call' />
                             <Input placeholder='Mobile No' value={mobile} onChangeText={text => setMobile(text)} />
-                            <Icon name='checkmark-circle' />
+                            {/* <Icon name='checkmark-circle' /> */}
                         </Item>
                     </CardItem>
                     <CardItem>
                         <Item>
                             <Icon active name='mail' />
                             <Input placeholder='E-Mail' value={email} onChangeText={text => setEmail(text)} />
-                            <Icon name='checkmark-circle' />
+                            {/* <Icon name='checkmark-circle' /> */}
                         </Item>
                     </CardItem>
                 </Card>
-
             </Content>
         </Container>
     )

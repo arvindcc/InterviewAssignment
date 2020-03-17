@@ -9,8 +9,10 @@ export const pushNewContact: Reducer<StoreState, PushContact> = (state = initial
     switch (action.type) {
         case constants.PUSH_NEW_CONTACT:
             console.log('pushNewContact')
-            return { ...state.items, ...action.payload }
-
+            return {
+                ...state,
+                contact: action.payload
+            };
         default:
             return state;
     }
