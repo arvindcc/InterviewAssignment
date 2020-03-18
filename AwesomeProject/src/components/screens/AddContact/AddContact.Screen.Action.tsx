@@ -21,7 +21,7 @@ export const saveContact: ActionCreator<ThunkAction<
     any,
     // The type of the last action to be dispatched
     Action
->> = (name, email, mobile, avatar) => {
+>> = (name = '', email = '', mobile = '', avatar = '') => {
     console.log('saveContactThunkAction');
     return async (dispatch: ThunkDispatch<StoreState, void, Action>) => {
         dispatch(itemsAreLoading(true));
@@ -63,7 +63,7 @@ export const updateContact: ActionCreator<ThunkAction<
     any,
     // The type of the last action to be dispatched
     Action
->> = (id, name, email, mobile, avatar) => {
+>> = (id = 0, name = '', email = '', mobile = '', avatar = '') => {
     console.log('updateContactThunkAction');
     return async (dispatch: ThunkDispatch<StoreState, void, Action>) => {
         dispatch(itemsAreLoading(true));
