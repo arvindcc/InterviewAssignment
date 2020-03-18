@@ -1,5 +1,5 @@
 import { connect } from 'react-redux';
-import { saveContact } from './AddContact.Screen.Action';
+import { saveContact, updateContact } from './AddContact.Screen.Action';
 import AddContact from './AddContact.Screen';
 import { StoreState } from '../../../types/index'
 import { ThunkDispatch } from 'redux-thunk';
@@ -21,6 +21,8 @@ const mapDispatchToProps = (dispatch: ThunkDispatch<StoreState, void, Action>) =
     console.log('mapDispatchToProps');
     return {
         saveContact: (name: string, email: string, mobile: string, avatar: string) => dispatch(saveContact(name, email, mobile, avatar)),
+
+        updateContact: (id: number, name: string, email: string, mobile: string, avatar: string) => dispatch(updateContact(id, name, email, mobile, avatar)),
     };
 };
 

@@ -1,28 +1,32 @@
 import React, { useState } from 'react';
 import { Container, Header, Left, Icon, Body, Title, Text, Right, Content, Button, Item, Input, Card, CardItem, View, Thumbnail, Label, Spinner } from 'native-base';
 import { Action } from 'redux';
-import { AddContactScreenNavigationProp } from '../../../navigation/type'
+import { AddContactScreenNavigationProp, AddContactScreenRouteProp } from '../../../navigation/type'
 import ImagePicker from 'react-native-image-picker';
 import { IContact } from '../../../types'
-import { useDispatch } from 'react-redux';
-import { itemsAreLoading } from '../../../redux/globalActions';
 
 interface Props {
     contact: IContact;
     navigation: AddContactScreenNavigationProp;
-    //saveContact(name: string, email: string, mobile: string, avatar: string): Promise<Action>;
+    route: AddContactScreenRouteProp;
     saveContact(name: string, email: string, mobile: string, avatar: string): Promise<Action>;
+    updateContact(id: number, name: string, email: string, mobile: string, avatar: string): Promise<Action>;
+
     isLoading: boolean;
     hasError: boolean;
 
 }
 
 const AddContact: React.FC<Props> = (props) => {
-
-    const [name, setName] = useState('Arvind Chawdhary')
-    const [mobile, setMobile] = useState('9820342351')
-    const [email, setEmail] = useState('arvind@example.com')
-    const [avatar, setAvatar] = useState('')
+    const { isEdit, contact } = props.route.params;
+    console.log('Route Contact');
+    console.log(contact);
+    console.log('Route isEdit');
+    console.log(isEdit);
+    const [name, setName] = useState(contact.name)
+    const [email, setEmail] = useState(contact.email)
+    const [mobile, setMobile] = useState(contact.mobile)
+    const [avatar, setAvatar] = useState(contact.avatar)
     const [imageLoad, setImageLoad] = useState(false)
     //const dispatch = useDispatch();
     const options = {
@@ -57,10 +61,16 @@ const AddContact: React.FC<Props> = (props) => {
 
     }
 
-    const onSaveContact = () => {
-        props.saveContact(name, email, mobile, avatar)
+    const onSaveContact = (isEdit: boolean) => {
+        console.log(isEdit)
+        if (isEdit)
+            props.updateContact(contact.id, name, email, mobile, avatar)
+        else
+            props.saveContact(name, email, mobile, avatar)
         props.navigation.goBack();
     }
+
+
 
     return (
         <Container>
@@ -71,12 +81,10 @@ const AddContact: React.FC<Props> = (props) => {
                     </Button>
                 </Left>
                 <Body>
-                    <Title>
-                        <Text>New Contact</Text>
-                    </Title>
+                    <Title>New Contact</Title>
                 </Body>
                 <Right>
-                    <Button transparent onPress={onSaveContact}>
+                    <Button transparent onPress={() => onSaveContact(isEdit)}>
                         <Icon name="ios-checkmark" />
                     </Button>
                 </Right>

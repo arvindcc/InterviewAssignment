@@ -69,6 +69,33 @@ class ContactService {
         });
     }
 
+    update = (contact) => {
+        console.log('save')
+        console.log(contact);
+        return new Promise((resolve, reject) => {
+            getContactRepository().then(realm => {
+                //const oldContact = realm.objects(ContactSchema.name).filtered('id = ')[0];
+                realm.write(() => {
+                    const newContact = realm.create(ContactSchema.name, contact, true);
+                    //realm.close();
+                    if (!newContact) {
+                        //TODO: Create Custom Error 
+                        reject({
+                            msg: 'Unable to save new contact object.'
+                        });
+                    } else {
+                        resolve(newContact);
+                    }
+                });
+            }).catch(error => {
+                console.log('Error ContactService.save');
+                console.log(error);
+
+                reject(error);
+            });
+        });
+    }
+
 };
 
 export default ContactService;

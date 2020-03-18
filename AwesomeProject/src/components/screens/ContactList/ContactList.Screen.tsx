@@ -3,7 +3,7 @@ import { FlatList } from 'react-native';
 import { Container, List, ListItem, Header, Title, Content, Thumbnail, Text, Left, Body, Right, Icon, Button, Spinner } from 'native-base';
 import { ContactModel } from '../../../realm/models/Contact'
 import { Action } from 'redux';
-import { AddContactScreenNavigationProp } from '../../../navigation/type'
+import { AddContactScreenNavigationProp, AddContactScreenRouteProp } from '../../../navigation/type'
 interface IContact {
     id: string;
     name: string;
@@ -59,8 +59,8 @@ const ContactListScreen: React.FC<Props> = (props: Props) => {
             let source = props.contacts[key].avatar == '' ? '../../../assets/images/defaultAvatar.png' : props.contacts[key].avatar;
             console.log(source);
             listItem.push(
-                <ListItem avatar key={props.contacts[key].id}>
-                    <Left style={{ flex: 1 }}>
+                <ListItem avatar key={props.contacts[key].id} noBorder>
+                    <Left>
                         {
                             props.contacts[key].avatar == '' ?
                                 <Thumbnail small source={require('../../../assets/images/defaultAvatar.png')} />
@@ -68,13 +68,15 @@ const ContactListScreen: React.FC<Props> = (props: Props) => {
                                 <Thumbnail small source={{ uri: source }} />
                         }
                     </Left>
-                    <Body style={{ flex: 3 }}>
+                    <Body>
                         <Text>{props.contacts[key].name}</Text>
                         <Text note>{props.contacts[key].mobile}</Text>
                     </Body>
-                    {/* <Right style={{ flex: 1 }}>
-                        <Text note>3:43 pm</Text>
-                    </Right> */}
+                    <Right>
+                        <Button transparent onPress={() => props.navigation.push('AddContact', { isEdit: true, contact: props.contacts[key] })}>
+                            <Icon name='create' />
+                        </Button>
+                    </Right>
                 </ListItem>
 
             )
@@ -97,12 +99,12 @@ const ContactListScreen: React.FC<Props> = (props: Props) => {
                         <Icon name='list' onPress={props.getAllContacts} />
                     </Button>
                 </Left> */}
-                <Body>
-                    <Title>Contact</Title>
+                <Body style={{ alignItems: 'center' }} >
+                    <Title >Contact</Title>
                 </Body>
                 <Right >
-                    <Button transparent onPress={() => props.navigation.push('AddContact')}>
-                        <Icon fontSize={16} name='add' />
+                    <Button transparent onPress={() => props.navigation.push('AddContact', { isEdit: false, contact: new ContactModel() })}>
+                        <Icon name='add' />
                     </Button>
                 </Right>
             </Header>
@@ -114,7 +116,6 @@ const ContactListScreen: React.FC<Props> = (props: Props) => {
                             renderContactList()
                         }
                     </List>}
-
             </Content>
         </Container>
     );

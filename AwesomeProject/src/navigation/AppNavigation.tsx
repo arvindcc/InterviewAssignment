@@ -12,7 +12,16 @@ const AppNavigator = () => {
     <NavigationContainer>
       <AppStack.Navigator initialRouteName="ContactList" headerMode="none">
         <AppStack.Screen name="ContactList" component={ContactListContainer} />
-        <AppStack.Screen name="AddContact" component={AddContactContainer} />
+        <AppStack.Screen
+          name="AddContact"
+          component={AddContactContainer}
+          initialParams={{ isEdit: false }}
+        />
+        {/* <AppStack.Screen
+          name="EditContact"
+          component={AddContactContainer}
+          initialParams={{ isEdit: true }}
+        /> */}
       </AppStack.Navigator>
     </NavigationContainer>
     // <AppStack.Navigator initialRouteName="ContactList">
